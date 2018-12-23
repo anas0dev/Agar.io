@@ -3,6 +3,8 @@ window.onload = main;
 var w = window.innerWidth;
 var h = window.innerHeight;
 
+var frameLoop;
+
 class Vector{
 	constructor (x, y, length){
 		this.x = x;
@@ -40,6 +42,12 @@ class Vector{
 		this.y -= v.y;
 		return this;
 	}
+
+	div(n){
+		this.x /= n;
+		this.y /= n;
+		return this;
+	}
 	
 	copy(){
 		return new Vector(this.x, this.y);
@@ -64,11 +72,11 @@ class joueur{
 		this.name = name;
 		this.color = randomColorHex();
 		this.size = 15;
-		this.vitesse = 2;
+		this.vitesse = 25;
 		this.position = new Vector(random(1, w), random(1, h));
 		this.context = context;
 		//this.mouse = new MouseEvent("mouse");
-		this.draw();
+		//this.draw();
 	}
 
 	draw(){
@@ -128,20 +136,41 @@ function createMap(){
 	return map;
 }
 
-function main() {
-	
-	var map = createMap();
-	var context = map.getContext("2d");
+var anas;
+var map;
+var context;
 
-	var anas = new joueur("anas", context);
-	map.addEventListener("mousemove", function(e){
+function main() {
+
+	map = createMap();
+	context = map.getContext("2d");
+	
+
+	anas = new joueur("anas", context);
+	window.addEventListener("mousemove", function(e){
 		let mouse = new Vector(e.clientX, e.clientY);
+	clearArc(context, anas.position.x, anas.position.y, anas.size);
+
 		mouse.sub(anas.position);
 		mouse.setLength(5);
-		anas.position.add(mouse);
-		anas.draw();
+		anas.position.add(mouse.div(anas.vitesse));
+		//anas.draw();
 	});
 	//anas.draw();
-
+	window.requestAnimationFrame(onFrame);
 	
+}
+
+function onFrame(){
+	frameLoop = window.requestAnimationFrame(onFrame);
+	anas.draw();
+}
+
+function clearArc(context, x, y, radius) {
+  context.save();
+  context.globalCompositeOperation = 'destination-out';
+  context.beginPath();
+  context.arc(x, y, radius, 0, 2 * Math.PI, false);
+  context.fill();
+  context.restore();
 }
