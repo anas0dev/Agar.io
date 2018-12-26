@@ -42,6 +42,12 @@ class Vector{
 		return this;
 	}
 	
+	round(){
+		this.x = Math.round(this.x);
+		this.y = Math.round(this.y);
+		return this;
+	}
+	
 	copy(){
 		return new Vector(this.x, this.y);
 	}
