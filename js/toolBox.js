@@ -22,3 +22,14 @@ function clearArc(x, y, radius) {
   context.fill();
   context.restore();
 }
+
+/* function hit(r1, r2) { // hit test box
+     return (((r1.x + r1.w >= r2.x) && (r1.x <= r2.x + r2.w)) && ((r1.y
+				+ r1.h >= r2.y) && (r1.y <= r2.y + r2.h)));
+}
+
+function hits(test) { // hittest against multiple boxes
+     for(let food of foods) if(hit(test, food)) return true;
+     return false;
+} */
+

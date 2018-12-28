@@ -53,29 +53,34 @@ function main() {
 }
 // var a = 1;
 function onFrame(){
-	let mouseTmp = mouse;
+	//let mouseTmp = mouse;
 	frameLoop = window.requestAnimationFrame(onFrame);
 	drawGrid();
 	for(let i = 0; i < foods.length; i++){
 		drawCercle(foods[i]);
 	}
 	clearArc(player.position.x, player.position.y, player.size);
-	if(mouse !== undefined && mouse !== player.position){
+	/* if(mouse !== undefined && mouse !== player.position){
 		if(moving){
 			mouseTmp.sub(player.position);
 			player.position.add(mouseTmp.div(player.vitesse).round());
 			moving = false;
-			/* if(a==60){
-				log(mouseTmp);
-				a=1;
-			}
-			a++; */
+			
 		}else{
 			player.position.add(mouseTmp);
 			//log("2");
 		}
-	}
+	} */
+	player.move();
 	
+	for(let i = 0; i < foods.length; i++){
+		log(player.distanceToCercle(foods[i]));
+		if(player.distanceToCercle(foods[i]) < player.getSize + foods[i].getSize){
+			player.eatCercle(foods[i]);
+			foods.splice(i, 1);
+		}
+	}
+	// hits(player);
 	drawPlayer(player);
 }
 

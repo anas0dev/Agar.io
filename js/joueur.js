@@ -5,7 +5,7 @@ class Joueur extends Cercle {
 		this.name = name;
 		//this.color = randomColorHex();
 		this.size = 30;
-		this.vitesse = 25;
+		this.vitesse = 50;
 		//this.position = new Vector(random(1, w), random(1, h));
 		//this.context = context;
 	}
@@ -36,6 +36,30 @@ class Joueur extends Cercle {
 	}
 	set setVitesse(newVitesse){
 		this.vitesse = newVitesse;
+	}
+	
+	eatCercle(cercle) {
+		this.size = this.size + cercle.getSize;
+		//foods.splice(foods.indexOf(cercle), 1);
+	}
+	
+	move(){
+		var copyThis = this.position.copy();
+		var mouseTmp = mouse;
+		if(mouse !== undefined /*&& mouse.greaterOrEqualTo(copyThis.add(new Vector(5, 5))) 
+			/*&& mouse.greaterOrEqualTo(copyThis.sub(new Vector(10, 10)))*/ ){
+			if(moving){
+				mouseTmp.sub(player.position);
+				player.position.add(mouseTmp.div(player.vitesse)/* .round() */);
+				
+				// log("player " +log( player.position.add(mouseTmp.div(player.vitesse)/* .round() */)));
+				// log("mouseTmp " +log( mouseTmp));
+				// log("mouseTmp.div(player.vitesse) " + log(mouseTmp.div(player.vitesse)));
+				moving = false;
+			}else{
+				player.position.add(mouse);
+			}
+		}
 	}
 
 }

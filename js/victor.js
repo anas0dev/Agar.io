@@ -48,12 +48,48 @@ class Vector{
 		return this;
 	}
 	
+	lowerOrEqualTo(v){
+		if(this.x <= v.x && this.y <= v.y)
+			return true;
+		return false;
+	}
+	
+	lowerTo(v){
+		if(this.x < v.x && this.y < v.y)
+			return true;
+		return false;
+	}
+	
+	greaterOrEqualTo(v){
+		if(this.x >= v.x && this.y >= v.y)
+			return true;
+		return false;
+	}
+	
+	greaterTo(v){
+		if(this.x > v.x && this.y > v.y)
+			return true;
+		return false;
+	}
+	
+	equalTo(v){
+		if(this.x === v.x && this.y === v.y)
+			return true;
+		return false;
+	}
+	
 	copy(){
 		return new Vector(this.x, this.y);
 	}
 	
 	lengthVector(){
 		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
+	
+	distanceToVector(v){
+		let copyThis = this.copy();
+		copyThis.sub(v);
+		return copyThis.lengthVector();
 	}
 	
 	
