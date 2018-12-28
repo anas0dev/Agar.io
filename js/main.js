@@ -16,7 +16,8 @@ function createMap(){
 
 
 
-var anas, mouse = null;
+var player, mouse;
+var foods = [];
 var map;
 var context;
 var moving = false;
@@ -32,18 +33,21 @@ function main() {
 	map = createMap();
 	context = map.getContext("2d");
 	
+	for(let i = 0; i < 100; i++){
+		foods[i] = new Cercle();
+	}
 
-	anas = new joueur("anas", context);
+	player = new Joueur("anas");
 	/* window.addEventListener("mousemove", function(e){
 		mouse = new Vector(e.clientX, e.clientY);
-		clearArc(anas.position.x, anas.position.y, anas.size+1);
+		clearArc(player.position.x, player.position.y, player.size+1);
 
-		mouse.sub(anas.position);
+		mouse.sub(player.position);
 		mouse.setLength(5);
-		anas.position.add(mouse.div(anas.vitesse));
-		//anas.draw();
+		player.position.add(mouse.div(player.vitesse));
+		//player.draw();
 	}); */
-	//anas.draw();
+	//player.draw();
 	window.requestAnimationFrame(onFrame);
 	
 }
@@ -52,11 +56,14 @@ function onFrame(){
 	let mouseTmp = mouse;
 	frameLoop = window.requestAnimationFrame(onFrame);
 	drawGrid();
-	clearArc(anas.position.x, anas.position.y, anas.size);
-	if(mouse.x !== anas.position.x && mouse.y !== anas.position.y){
+	for(let i = 0; i < foods.length; i++){
+		drawCercle(foods[i]);
+	}
+	clearArc(player.position.x, player.position.y, player.size);
+	if(mouse !== undefined && mouse !== player.position){
 		if(moving){
-			mouseTmp.sub(anas.position);
-			anas.position.add(mouseTmp.div(anas.vitesse).round());
+			mouseTmp.sub(player.position);
+			player.position.add(mouseTmp.div(player.vitesse).round());
 			moving = false;
 			/* if(a==60){
 				log(mouseTmp);
@@ -64,15 +71,15 @@ function onFrame(){
 			}
 			a++; */
 		}else{
-			anas.position.add(mouseTmp);
+			player.position.add(mouseTmp);
 			//log("2");
 		}
 	}
 	
-	anas.draw();
+	drawPlayer(player);
 }
 
-function drawGrid(){
+/* function drawGrid(){
 	// let nombreGridWidth = w / 10;
 	// let nombreGridHeight = h / 10;
 	
@@ -93,6 +100,6 @@ function drawGrid(){
 	
 	context.stroke();
 	context.globalAlpha = 1;
-}
+} */
 
 

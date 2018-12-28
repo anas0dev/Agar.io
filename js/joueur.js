@@ -1,20 +1,21 @@
-class joueur{
+class Joueur extends Cercle {
 
-	constructor (name, context){
+	constructor (name){
+		super();
 		this.name = name;
-		this.color = randomColorHex();
+		//this.color = randomColorHex();
 		this.size = 30;
 		this.vitesse = 25;
-		this.position = new Vector(random(1, w), random(1, h));
-		this.context = context;
+		//this.position = new Vector(random(1, w), random(1, h));
+		//this.context = context;
 	}
 
-	draw(){
-		this.context.beginPath();
-		this.context.fillStyle = this.color;
-		this.context.arc(this.position.x, this.position.y, this.size, 0, 2 * Math.PI);
-		this.context.fill();
-	}
+	/* draw(){
+		context.beginPath();
+		context.fillStyle = this.color;
+		context.arc(this.position.x, this.position.y, this.size, 0, 2 * Math.PI);
+		context.fill();
+	} */
 	
 	get getName(){
 		return this.name;
@@ -23,12 +24,12 @@ class joueur{
 		this.name = newName;
 	}
 
-	get getSize(){
+	/* get getSize(){
 		return this.size;
 	}
 	set setSize(newSize){
 		this.size = newSize;
-	}
+	} */
 
 	get getVitesse(){
 		return this.vitesse;
@@ -38,3 +39,5 @@ class joueur{
 	}
 
 }
+
+// Object.setPrototypeOf(Joueur.prototype, Cercle);
