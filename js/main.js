@@ -47,21 +47,22 @@ function main() {
 	window.requestAnimationFrame(onFrame);
 	
 }
-var a = 1;
+// var a = 1;
 function onFrame(){
 	let mouseTmp = mouse;
 	frameLoop = window.requestAnimationFrame(onFrame);
+	drawGrid();
 	clearArc(anas.position.x, anas.position.y, anas.size);
 	if(mouse.x !== anas.position.x && mouse.y !== anas.position.y){
 		if(moving){
 			mouseTmp.sub(anas.position);
 			anas.position.add(mouseTmp.div(anas.vitesse).round());
 			moving = false;
-			if(a==60){
+			/* if(a==60){
 				log(mouseTmp);
 				a=1;
 			}
-			a++;
+			a++; */
 		}else{
 			anas.position.add(mouseTmp);
 			//log("2");
@@ -69,6 +70,29 @@ function onFrame(){
 	}
 	
 	anas.draw();
+}
+
+function drawGrid(){
+	// let nombreGridWidth = w / 10;
+	// let nombreGridHeight = h / 10;
+	
+	context.lineWidth = 1;
+	context.strokeStyle = "#dddddd";
+	context.globalAlpha = 0.1;
+	context.beginPath();
+	
+	for(let i=50; i < w; i += 50){
+		context.moveTo(i, 0);
+		context.lineTo(i, h);
+	}
+	
+	for(let i=50; i < h; i += 50){
+		context.moveTo(0, i);
+		context.lineTo(w, i);
+	}
+	
+	context.stroke();
+	context.globalAlpha = 1;
 }
 
 

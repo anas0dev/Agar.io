@@ -3,7 +3,7 @@ class joueur{
 	constructor (name, context){
 		this.name = name;
 		this.color = randomColorHex();
-		this.size = 15;
+		this.size = 30;
 		this.vitesse = 25;
 		this.position = new Vector(random(1, w), random(1, h));
 		this.context = context;
