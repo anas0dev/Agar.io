@@ -1,32 +1,23 @@
 window.onload = main;
 
-var w = window.innerWidth;
-var h = window.innerHeight;
+
+var map, context;
+var player;
+var foods = [];
+var mouse, mouseIsMoving = false;
 
 var frameLoop;
 
 
-function createMap(){
-	let map = document.createElement("canvas");
-	map.width = w;
-	map.height = h;
-	document.body.appendChild(map);
-	return map;
-}
 
 
-
-var player, mouse;
-var foods = [];
-var map;
-var context;
-var moving = false;
 var distMouse;
 
 
 
 function main() {
-
+	
+	player = new Joueur("anas");
 	map = createMap();
 	context = map.getContext("2d");
 	
@@ -34,7 +25,6 @@ function main() {
 		foods[i] = new Circle();
 	}
 
-	player = new Joueur("anas");
 
 	window.requestAnimationFrame(onFrame);
 	

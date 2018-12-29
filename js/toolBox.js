@@ -1,4 +1,6 @@
 
+var w = window.innerWidth;
+var h = window.innerHeight;
 
 function log(message){
 	console.log(message);
@@ -25,7 +27,7 @@ function clearArc(x, y, radius) {
 
 document.addEventListener("mousemove", function(e){
 	mouse = new Vector(e.clientX, e.clientY);
-	moving = true;
+	mouseIsMoving = true;
 });
 
 /* function hit(r1, r2) { // hit test box
