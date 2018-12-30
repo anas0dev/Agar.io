@@ -1,26 +1,14 @@
 window.onload = main;
 
-var w = window.innerWidth;
-var h = window.innerHeight;
-
+var map, context;
+var player, players = [];
+var foods = [];
+var mouse, mouseBis, mouseIsMoving = false;
 var frameLoop;
 
 
-function createMap(){
-	let map = document.createElement("canvas");
-	map.width = w;
-	map.height = h;
-	document.body.appendChild(map);
-	return map;
-}
 
 
-
-var player, mouse;
-var foods = [];
-var map;
-var context;
-var moving = false;
 var distMouse;
 
 
@@ -42,12 +30,16 @@ function main() {
 
 function onFrame(){
 	frameLoop = window.requestAnimationFrame(onFrame);
+	
+	clearArc(player.position.x, player.position.y, player.radius+1);
+	//context.translate(w / 2 - player.position.x, h / 2 - player.position.y);
+
 	drawGrid();
+	
 	for(let i = 0; i < foods.length; i++){
 		drawCircle(foods[i]);
 	}
-	clearArc(player.position.x, player.position.y, player.radius+1);
-
+	
 	player.move();
 	
 	for(let i = 0; i < foods.length; i++){

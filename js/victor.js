@@ -2,27 +2,27 @@ class Vector{
 	constructor (x, y, length){
 		this.x = x;
 		this.y = y;
-		if(length)
+		/*if(length)
 			this.length = length;
 		else
-			this.length = this.lengthVector();
+			this.length = this.lengthVector();*/
 	}
 	
-	set setVector(v){
+	setVector(v){
 		this.x = v.x;
 		this.y = v.y;
-		this.length = v.length;
+		//this.length = v.length;
 	}
 	get getVector(){
 		return this;
 	}
 	
-	get getLength(){
+	/*get getLength(){
 		return this.length;
 	}
 	setLength(length){
 		this.length = length;
-	}
+	}*/
 	
 	add(v){
 		this.x += v.x;

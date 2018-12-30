@@ -1,4 +1,7 @@
 
+var w = window.innerWidth;
+var h = window.innerHeight;
+
 
 function log(message){
 	console.log(message);
@@ -25,16 +28,8 @@ function clearArc(x, y, radius) {
 
 document.addEventListener("mousemove", function(e){
 	mouse = new Vector(e.clientX, e.clientY);
-	moving = true;
+	mouseBis = mouse.copy();
+	/*mouse.x = e.clientX;
+	mouse.y = e.clientY;*/
+	mouseIsMoving = true;
 });
-
-/* function hit(r1, r2) { // hit test box
-     return (((r1.x + r1.w >= r2.x) && (r1.x <= r2.x + r2.w)) && ((r1.y
-				+ r1.h >= r2.y) && (r1.y <= r2.y + r2.h)));
-}
-
-function hits(test) { // hittest against multiple boxes
-     for(let food of foods) if(hit(test, food)) return true;
-     return false;
-} */
-
