@@ -10,6 +10,13 @@ function drawPlayer(player){
 	context.fill();
 }
 
+function drawEnemy(enemy){
+	context.beginPath();
+	context.fillStyle = enemy.color;
+	context.arc(enemy.x, enemy.y, enemy.radius, 0, 2 * Math.PI);
+	context.fill();
+}
+
 function drawCircle(cercle){
 	context.beginPath();
 	context.fillStyle = cercle.getColor;

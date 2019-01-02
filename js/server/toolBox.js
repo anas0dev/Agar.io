@@ -1,24 +1,20 @@
 
-var w = window.innerWidth;
-var h = window.innerHeight;
-var w = h = 600;
 
-
-var log = function (message){
+exports.log = function (message){
 	console.log(message);
 }
 
-var randomColorHex = function (){
+exports.randomColorHex = function (){
 	return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
 }
 
-function random(min, max){
+exports.random = function (min, max){
 	return Math.floor((Math.random() * (max - min)) + min);
 }
 
 // J'ai trouvé cette fonction sur :  http://stackoverflow.com/a/12895687/1250044
 
-function clearArc(x, y, radius) {
+exports.clearArc = function (x, y, radius) {
   context.save();
   context.globalCompositeOperation = 'destination-out';
   context.beginPath();
@@ -26,13 +22,3 @@ function clearArc(x, y, radius) {
   context.fill();
   context.restore();
 }
-
-document.addEventListener("mousemove", function(e){
-	mouse = new Vector(e.clientX, e.clientY);
-	mouseBis = mouse.copy();
-	//mouse.x = e.clientX;
-	//mouse.y = e.client
-	mouseIsMoving = true;
-});
-
-

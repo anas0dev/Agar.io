@@ -10,7 +10,7 @@ class Player extends Circle {
 		this.radius = 30;
 		this.vitesse = 70;
 		this.position = new Vector(x, y);
-		//this.inMoving = false;
+		this.inMoving = false;
 	}
 
 	
@@ -66,7 +66,7 @@ class Player extends Circle {
 			mouseBis.sub(player.position);
 			player.position.add(mouseBis.div(player.vitesse)/* .round() */);
 			mouseBis.setVector(mouse);
-			//this.inMoving = true;
+			this.inMoving = true;
 			
 		}
 	}

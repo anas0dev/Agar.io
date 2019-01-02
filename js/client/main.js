@@ -35,34 +35,58 @@ function main() {
 		for(let i = 0; i < data.foods.length; i++)
 			foods[i] = new Circle(data.foods[i].x, data.foods[i].y);
 	});
+	
+	
 
 	//player = new Player("anas");
-	if(player == undefined)
+	
 	window.requestAnimationFrame(onFrame);
 	
 }
 
+
+
 function onFrame(){
 	frameLoop = window.requestAnimationFrame(onFrame);
 	//if(player.inMoving)
-	clearArc(player.position.x, player.position.y, player.radius+1);
-	//context.translate(w / 2 - player.position.x, h / 2 - player.position.y);
+	
+	if(player !== undefined){
+		clearArc(player.position.x, player.position.y, player.radius+1);
+		//context.translate(w / 2 - player.position.x, h / 2 - player.position.y);
 
-	drawGrid();
-	
-	for(let i = 0; i < foods.length; i++){
-		drawCircle(foods[i]);
-	}
-	//player.inMoving = false;
-	player.move();
-	
-	for(let i = 0; i < foods.length; i++){
-		if(player.distanceToCircle(foods[i]) < player.getRadius - 2){
-			player.eatCircle(foods[i]);
-			clearArc(foods[i].position.x, foods[i].position.y, foods[i].radius+1);
-			foods.splice(i, 1);
+		player.inMoving = false;
+		player.move();
+		
+		if(player.inMoving){
+			socket.emit('playerMove', {
+				id : player.name,
+				x : player.position.x,
+				y : player.position.y
+			});
 		}
+		
+		for(let i = 0; i < foods.length; i++){
+			if(player.distanceToCircle(foods[i]) < player.getRadius - 2){
+				player.eatCircle(foods[i]);
+				clearArc(foods[i].position.x, foods[i].position.y, foods[i].radius+1);
+				foods.splice(i, 1);
+			}
+		}
+		
+		drawGrid();
+		
+		for(let i = 0; i < foods.length; i++){
+			drawCircle(foods[i]);
+		}
+		
+		for(let i = 0; i < players.length; i++){
+			if(players[i].id !== player.name)
+				drawEnemy(players[i]);
+		}
+		
+		drawPlayer(player);
 	}
-	drawPlayer(player);
 }
+
+
 
