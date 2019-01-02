@@ -1,0 +1,8 @@
+
+class map {
+
+	constructor(){
+		
+	}
+
+}
