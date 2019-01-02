@@ -32,7 +32,7 @@ var massNewPlayer = Math.PI * 30 * 30;
 var players = [];
 var foods = [];
 
-
+var data, dataForAll;
 
 /* function connection(socket){
 	console.log("Un nouveau joueur viens de se connecté");
@@ -55,26 +55,50 @@ function newGame(){
 
 
 io.sockets.on('connection', function(socket){
-	console.log("Un nouveau joueur viens de se connecté");
+	console.log("Le joueur " + socket.id + " viens de se connecté");
 	
 	var player = new Player(socket.id ,random(1, 600), random(1, 600));
 	players.push(player);
 	
 	
-	
-	if(players.length === 0){
+	if(players.length === 1){
 		newGame();
+		data = new Data(socket.id, foods, players);
+		socket.emit('newGame', data);
+	}else{
+		data = new Data(socket.id, foods, players);
+		socket.emit('newGame', data);
+		socket.broadcast.emit('newPlayer', {
+			player : player
+		});
 	}
-	/* data.id = socket.id;
-	data.foods = foods;
-	data.players = players; */
+
 	
-	var data = new Data(socket.id, foods, players);
+	socket.on('playerMove', function(data){
+		var indexPlayer = players.indexOf(player);
+		players[indexPlayer].x = data.x;
+		players[indexPlayer].y = data.y;
+		socket.broadcast.emit('updatePosition', {
+			id : player.id,
+			x : data.x,
+			y : data.y
+		});
+	});
 	
-	socket.emit('newGame', data);
+	
+	
+	socket.on('disconnect', function(){
+		players.splice(players.indexOf(player), 1);
+		console.log("Le joueur " + socket.id + " viens de se déconnecté");
+	});
 	
 	
 });
+
+
+
+
+
 
 function Data(id, foods, players){
 	this.id = id;
@@ -94,10 +118,15 @@ function Player(id, x, y){
 	this.y = y;
 	this.mass = massNewPlayer;
 	this.vitesse = 50;
+	this.color = randomColorHex();
 }
 
 function random(min, max){
 	return Math.floor((Math.random() * (max - min)) + min);
+}
+
+function randomColorHex(){
+	return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
 }
 
 

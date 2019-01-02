@@ -18,14 +18,7 @@ function random(min, max){
 
 // J'ai trouvé cette fonction sur :  http://stackoverflow.com/a/12895687/1250044
 
-function clearArc(x, y, radius) {
-  context.save();
-  context.globalCompositeOperation = 'destination-out';
-  context.beginPath();
-  context.arc(x, y, radius, 0, 2 * Math.PI, false);
-  context.fill();
-  context.restore();
-}
+
 
 document.addEventListener("mousemove", function(e){
 	mouse = new Vector(e.clientX, e.clientY);
@@ -34,3 +27,5 @@ document.addEventListener("mousemove", function(e){
 	//mouse.y = e.client
 	mouseIsMoving = true;
 });
+
+

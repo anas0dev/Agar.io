@@ -10,6 +10,13 @@ function drawPlayer(player){
 	context.fill();
 }
 
+function drawEnemy(enemy){
+	context.beginPath();
+	context.fillStyle = enemy.color;
+	context.arc(enemy.x, enemy.y, enemy.radius, 0, 2 * Math.PI);
+	context.fill();
+}
+
 function drawCircle(cercle){
 	context.beginPath();
 	context.fillStyle = cercle.getColor;
@@ -23,7 +30,7 @@ function drawGrid(){
 	
 	context.lineWidth = 1;
 	context.strokeStyle = "#dddddd";
-	context.globalAlpha = 0.1;
+	//context.globalAlpha = 0.1;
 	context.beginPath();
 	
 	for(let i=50; i < mapWidth; i += 50){
@@ -37,13 +44,24 @@ function drawGrid(){
 	}
 	
 	context.stroke();
-	context.globalAlpha = 1;
+	//context.globalAlpha = 1;
 }
 
 function createMap(){
 	let map = document.createElement("canvas");
 	map.width = w;
 	map.height = h;
+	map.top = 100;
 	document.body.appendChild(map);
 	return map;
+}
+
+function clearArc(x, y, radius) {
+	context.save();
+	// context.globalCompositeOperation = 'destination-out';
+	context.beginPath();
+	context.fillStyle = 'white';
+	context.arc(x, y, radius, 0, 2 * Math.PI);
+	context.fill();
+	context.restore();
 }

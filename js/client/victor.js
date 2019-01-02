@@ -30,6 +30,8 @@ class Vector{
 		return this;
 	}
 	
+	
+	
 	sub(v){
 		this.x -= v.x;
 		this.y -= v.y;

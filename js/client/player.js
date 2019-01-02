@@ -10,7 +10,7 @@ class Player extends Circle {
 		this.radius = 30;
 		this.vitesse = 70;
 		this.position = new Vector(x, y);
-		//this.inMoving = false;
+		this.inMoving = false;
 	}
 
 	
@@ -50,10 +50,21 @@ class Player extends Circle {
 	
 	
 	eatCircle(circle) {
+		
 		let newMass = this.calculateMass() + circle.getMass;
-		//let newRadius = Math.sqrt(newMass / Math.PI);
+		this.mass = newMass;
 		this.radius = Math.sqrt(newMass / Math.PI);
-		//foods.splice(foods.indexOf(circle), 1);
+		
+		
+		if(this.position.x - this.radius < -10)
+			this.position.x += -(this.position.x - this.radius) - 10;
+		if(this.position.y - this.radius < -10)
+			this.position.y += -(this.position.y - this.radius) - 10;
+		if(this.position.x + this.radius > w+10)
+			this.position.x += -(this.position.x + this.radius) + w+10;
+		if(this.position.y + this.radius > h+10)
+			this.position.y += -(this.position.y + this.radius) + h+10;
+		
 	}
 	
 	move(){
@@ -62,11 +73,29 @@ class Player extends Circle {
 			/*&& mouse.greaterOrEqualTo(copyThis.sub(new Vector(10, 10)))*/ ){
 			if(mouse.y === player.position.y || mouse.x === player.position.x)
 				return;
+			var nextX = this.position.x + ((mouse.x - this.position.x) / this.vitesse);
+			var nextY = this.position.y + ((mouse.y - this.position.y) / this.vitesse);
+			if(nextX - this.radius <= -10 || nextX + this.radius >= w+10){
+				if(nextY - this.radius <= -10 || nextY + this.radius >= h+10)
+					return;
+				this.position.y = nextY;
+				this.inMoving = true;
+				return;
+			}
 			
-			mouseBis.sub(player.position);
-			player.position.add(mouseBis.div(player.vitesse)/* .round() */);
+			if(nextY - this.radius <= -10 || nextY + this.radius >= h+10){
+				if(nextX - this.radius <= -10 || nextX + this.radius >= w+10)
+					return;
+				this.position.x = nextX;
+				this.inMoving = true;
+				return;
+			}
+			
+			
+			mouseBis.sub(this.position);
+			this.position.add(mouseBis.div(this.vitesse)/* .round() */);
 			mouseBis.setVector(mouse);
-			//this.inMoving = true;
+			this.inMoving = true;
 			
 		}
 	}
