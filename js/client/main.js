@@ -111,6 +111,17 @@ function onFrame(){
 				//eating = true;
 			}
 		}
+		
+		for(let i = 0; i < players.length; i++){
+			if(players[i].id !== player.name){
+				if(player.position.distanceToVector(new Vector(players[i].x, players[i].y)) < player.radius - players[i].radius * 0.1 
+					&& player.mass > players[i].mass /* + (players[i].mass * 0.5) */){
+					player.eatPlayer(players[i]);
+					players.splice(i, 1);
+				}
+			}
+		}
+		
 		// context.translate(1, 1);
 		if(player.inMoving){
 			socket.emit('playerMove', {

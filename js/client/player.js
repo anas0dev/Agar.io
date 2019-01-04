@@ -48,15 +48,7 @@ class Player extends Circle {
 		}
 	}*/
 	
-	
-	
-	eatCircle(circle) {
-		
-		let newMass = this.calculateMass() + circle.getMass;
-		this.mass = newMass;
-		this.radius = Math.sqrt(newMass / Math.PI);
-		
-		
+	limiteMap(){
 		if(this.position.x - this.radius < -10)
 			this.position.x += -(this.position.x - this.radius) - 10;
 		if(this.position.y - this.radius < -10)
@@ -65,7 +57,32 @@ class Player extends Circle {
 			this.position.x += -(this.position.x + this.radius) + global.mapWidth+10;
 		if(this.position.y + this.radius > global.mapHeight+10)
 			this.position.y += -(this.position.y + this.radius) + global.mapHeight+10;
+	}
+	
+	eatCircle(circle) {
 		
+		let newMass = this.calculateMass() + circle.getMass;
+		this.mass = newMass;
+		this.radius = Math.sqrt(newMass / Math.PI);
+		
+		this.limiteMap();
+		// if(this.position.x - this.radius < -10)
+			// this.position.x += -(this.position.x - this.radius) - 10;
+		// if(this.position.y - this.radius < -10)
+			// this.position.y += -(this.position.y - this.radius) - 10;
+		// if(this.position.x + this.radius > global.mapWidth+10)
+			// this.position.x += -(this.position.x + this.radius) + global.mapWidth+10;
+		// if(this.position.y + this.radius > global.mapHeight+10)
+			// this.position.y += -(this.position.y + this.radius) + global.mapHeight+10;
+		
+	}
+	
+	eatPlayer(player){
+		let newMass = this.calculateMass() + player.mass;
+		this.mass = newMass;
+		this.radius = Math.sqrt(newMass / Math.PI);
+		
+		this.limiteMap();
 	}
 	
 	move(){

@@ -1,5 +1,5 @@
 class Vector{
-	constructor(x, y, length){
+	constructor(x, y){
 		this.x = x;
 		this.y = y;
 		/*if(length)
