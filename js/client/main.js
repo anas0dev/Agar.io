@@ -33,19 +33,37 @@ function main() {
 			if(players[i].id === data.id)
 					player = new Player(players[i].id, players[i].x, players[i].y);
 		for(let i = 0; i < data.foods.length; i++)
-			foods[i] = new Circle(data.foods[i].x, data.foods[i].y);
+			foods[i] = new Circle(data.foods[i].id, data.foods[i].x, data.foods[i].y);
 	});
 	
 	socket.on('newPlayer', function(data){
 		players.push(data.player);
+		for(let i = 0; i < data.foods.length; i++)
+			foods[i] = new Circle(data.foods[i].id, data.foods[i].x, data.foods[i].y);
 	});
 	
-	socket.on('updatePosition', function(data){
+	socket.on('updatePlayers', function(data){
+				//console.log(data.player.id);
+
 		for(let i = 0; i < players.length; i++){
-			if(players[i].id === data.id){
-				players[i].x = data.x;
-				players[i].y = data.y;
+			if(players[i].id === data.player.id){
+				players[i].x = data.player.x;
+				players[i].y = data.player.y;
+				players[i].mass = data.player.mass;
+				players[i].radius = data.player.radius;
 				break;
+			}
+		}
+	});
+	
+	socket.on('updateFoods', function(data){
+		//console.log(data.food);
+		if(data.player.d !== player.name){
+			for(let i = 0; i < foods.length; i++){
+				if(foods[i].id === data.food){
+					foods.splice(i, 1);
+					break;
+				}
 			}
 		}
 	});
@@ -56,7 +74,7 @@ function main() {
 	
 }
 
-
+//var eating;
 
 function onFrame(){
 	frameLoop = window.requestAnimationFrame(onFrame);
@@ -75,12 +93,22 @@ function onFrame(){
 		player.inMoving = false;
 		player.move();
 		
-		
+		//eating = false;
 		for(let i = 0; i < foods.length; i++){
 			if(player.distanceToCircle(foods[i]) < player.getRadius - 2){
 				player.eatCircle(foods[i]);
-				clearArc(foods[i].position.x, foods[i].position.y, foods[i].radius+1);
+				//clearArc(foods[i].position.x, foods[i].position.y, foods[i].radius+1);
+				
+				socket.emit('eatCircle', {
+					player : player.name,
+					playerMass : player.mass,
+					playerRadius : player.radius,
+					playerX : player.position.x,
+					playerY : player.position.y,
+					food : foods[i]
+				});
 				foods.splice(i, 1);
+				//eating = true;
 			}
 		}
 		
