@@ -21,7 +21,7 @@ function random(min, max){
 
 
 document.addEventListener("mousemove", function(e){
-	mouse = new Vector(e.clientX, e.clientY);
+	mouse = new Vector(player.position.x - w / 2 + e.clientX, player.position.y - h / 2 + e.clientY);
 	mouseBis = mouse.copy();
 	//mouse.x = e.clientX;
 	//mouse.y = e.client

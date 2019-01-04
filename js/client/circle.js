@@ -3,7 +3,8 @@
 
 class Circle {
 	
-	constructor (x, y){
+	constructor (id, x, y){
+		this.id = id;
 		this.color = randomColorHex();
 		this.radius = 10;
 		this.mass = this.calculateMass();

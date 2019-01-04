@@ -10,6 +10,8 @@ var io = require('socket.io')(server);
 
 var path    = require("path");
 
+var global = require('./js/client/global');
+
 //var Player = require('./js/client/player');
 //var Circle = require('./js/client/circle');
 //var toolBox = require('./js/client/toolBox');
@@ -24,13 +26,15 @@ app.get('/', function(req, res){
 	res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-var maxFood = 100;
+var maxFood = 1000;
 var massFood = Math.PI * 100;
 
 var massNewPlayer = Math.PI * 30 * 30;
 
 var players = [];
 var foods = [];
+
+var idFood = 0;
 
 var data, dataForAll;
 
@@ -49,7 +53,8 @@ var data, dataForAll;
 
 function newGame(){
 	for(let i = 0; i < maxFood; i++){
-		foods[i] = new Circle(random(1, 600), random(1, 600));
+		foods[i] = new Circle(random(10, 3950), random(10, 3950));
+		//console.log(foods[i].id);
 	}
 }
 
@@ -57,7 +62,7 @@ function newGame(){
 io.sockets.on('connection', function(socket){
 	console.log("Le joueur " + socket.id + " viens de se connecté");
 	
-	var player = new Player(socket.id ,random(1, 600), random(1, 600));
+	var player = new Player(socket.id ,random(50, 3950), random(50, 3950));
 	players.push(player);
 	
 	
@@ -65,11 +70,13 @@ io.sockets.on('connection', function(socket){
 		newGame();
 		data = new Data(socket.id, foods, players);
 		socket.emit('newGame', data);
+		console.log('newGame');
 	}else{
 		data = new Data(socket.id, foods, players);
 		socket.emit('newGame', data);
 		socket.broadcast.emit('newPlayer', {
-			player : player
+			player : player,
+			foods : foods
 		});
 	}
 
@@ -78,11 +85,28 @@ io.sockets.on('connection', function(socket){
 		var indexPlayer = players.indexOf(player);
 		players[indexPlayer].x = data.x;
 		players[indexPlayer].y = data.y;
-		socket.broadcast.emit('updatePosition', {
-			id : player.id,
-			x : data.x,
-			y : data.y
+		socket.broadcast.emit('updatePlayers', {
+			// id : player.id,
+			// x : data.x,
+			// y : data.y
+			player : player
 		});
+	});
+	
+	socket.on('eatCircle', function(data){
+		var indexPlayer = players.indexOf(player);
+		var indexFood = foods.indexOf(data.food);
+		players[indexPlayer].mass = data.playerMass;
+		players[indexPlayer].radius = data.playerRadius;
+		players[indexPlayer].x = data.playerX;
+		players[indexPlayer].y = data.playerY;
+
+		socket.broadcast.emit('updateFoods', {
+			player : player,
+			food : data.food.id
+		});
+		
+		foods.splice(indexFood, 1);
 	});
 	
 	
@@ -98,7 +122,9 @@ io.sockets.on('connection', function(socket){
 
 
 
-
+function generateIdFood(){
+	return idFood++;
+}
 
 function Data(id, foods, players){
 	this.id = id;
@@ -107,6 +133,7 @@ function Data(id, foods, players){
 }
 
 function Circle(x, y){
+	this.id = generateIdFood();
 	this.x = x;
 	this.y = y;
 }
