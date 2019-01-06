@@ -68,6 +68,17 @@ function createMap(){
 	return map;
 }
 
+function drawGameOver(){
+	context.save();
+	//context.translate(mapWidth / 4, 50);
+	context.font = "bold 60px arial";
+	context.beginPath();
+	
+	context.fillText('GAME OVER', w / 4, 100);
+	
+	context.restore();
+}
+
 function clearArc(x, y, radius) {
 	context.save();
 	// context.globalCompositeOperation = 'destination-out';

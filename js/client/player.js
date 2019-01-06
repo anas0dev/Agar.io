@@ -3,12 +3,12 @@
 
 class Player extends Circle {
 
-	constructor (name , x, y){
+	constructor (name, color, x, y){
 		super();
 		this.name = name;
-
+		this.color = color;
 		this.radius = 30;
-		this.v = 0;
+		//this.v = 0;
 		this.vitesse = 70;
 		this.position = new Vector(x, y);
 		this.inMoving = false;
@@ -86,7 +86,8 @@ class Player extends Circle {
 	}
 	
 	move(){
-		var copyThis = this.position.copy();
+		//var copyThis = this.position.copy();
+		var deplacement;
 		if(mouse !== undefined /*&& mouse.greaterOrEqualTo(copyThis.add(new Vector(5, 5))) 
 			/*&& mouse.greaterOrEqualTo(copyThis.sub(new Vector(10, 10)))*/ ){
 			if(mouse.y === player.position.y || mouse.x === player.position.x)
@@ -111,8 +112,9 @@ class Player extends Circle {
 			
 			// var mouseBis1 = new Vector(nextX, nextY);
 			mouseBis.sub(this.position);
-			this.v = mouseBis.div(this.vitesse);
-			this.position.add(this.v);
+			deplacement = mouseBis.div(this.vitesse);
+			this.position.add(deplacement);
+			mouse.add(deplacement);
 			// this.position.add(mouseBis1);
 			mouseBis.setVector(mouse);
 			//mouseBis.add(this.v);

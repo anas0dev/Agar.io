@@ -32,29 +32,33 @@ var massFood = Math.PI * 100;
 var massNewPlayer = Math.PI * 30 * 30;
 
 var players = [];
+var x, y;
 var foods = [];
 
 var idFood = 0;
 
 var data, dataForAll;
 
-/* function connection(socket){
-	console.log("Un nouveau joueur viens de se connecté");
-	
-	if(players.length === 0){
-		newGame();
-	}
-	
-	var player = new Player(socket.id);
-	players.push(player);
-	
-	
-} */
 
 function newGame(){
 	for(let i = 0; i < maxFood; i++){
-		foods[i] = new Circle(random(10, 3950), random(10, 3950));
+		foods[i] = new Circle(random(10, 3990), random(10, 3990));
 		//console.log(foods[i].id);
+	}
+}
+
+function collisionPlayers(){
+	var boucle = true;
+	while(boucle){
+		boucle = false;
+		x = random(100, 3950);
+		y = random(100, 3950);
+		for(let i = 0; i < players.length && players.length > 0; i++){
+			if(x >= players[i].x - 100 && x <= players[i].x + 100 && y >= players[i].y - 100 && y <= players[i].y + 100){
+				boucle = true;
+				break;
+			}
+		}
 	}
 }
 
@@ -62,7 +66,8 @@ function newGame(){
 io.sockets.on('connection', function(socket){
 	console.log("Le joueur " + socket.id + " viens de se connecté");
 	
-	var player = new Player(socket.id ,random(50, 3950), random(50, 3950));
+	collisionPlayers();
+	var player = new Player(socket.id ,x, y);
 	players.push(player);
 	
 	
@@ -82,37 +87,90 @@ io.sockets.on('connection', function(socket){
 
 	
 	socket.on('playerMove', function(data){
-		var indexPlayer = players.indexOf(player);
-		players[indexPlayer].x = data.x;
-		players[indexPlayer].y = data.y;
-		socket.broadcast.emit('updatePlayers', {
-			// id : player.id,
-			// x : data.x,
-			// y : data.y
-			player : player
-		});
+		//console.log(socket.id);
+		// var indexPlayer = players.indexOf(player);
+		for(let i = 0; i < players.length; i++){
+			if(players[i].id === data.id){
+				players[i].x = data.x;
+				players[i].y = data.y;
+				socket.broadcast.emit('updatePlayers', {
+					// id : player.id,
+					// x : data.x,
+					// y : data.y
+					player : player
+				});
+				break;
+			}
+		}
 	});
 	
 	socket.on('eatCircle', function(data){
 		var indexPlayer = players.indexOf(player);
 		var indexFood = foods.indexOf(data.food);
-		players[indexPlayer].mass = data.playerMass;
-		players[indexPlayer].radius = data.playerRadius;
-		players[indexPlayer].x = data.playerX;
-		players[indexPlayer].y = data.playerY;
+		for(let i = 0; i < players.length; i++){
+			if(players[i].id === data.player){
+				players[i].mass = data.playerMass;
+				players[i].radius = data.playerRadius;
+				players[i].x = data.playerX;
+				players[i].y = data.playerY;
 
-		socket.broadcast.emit('updateFoods', {
-			player : player,
-			food : data.food.id
+				socket.broadcast.emit('updateFoods', {
+					player : player,
+					food : data.food.id
+				});
+				
+				foods.splice(indexFood, 1);
+				break;
+			}
+		}
+	});
+	
+	socket.on('eatPlayer', function(data){
+		var i;
+		for(i = 0; i < players.length; i++){
+			if(data.playerDied === players[i].id){
+				var playerDied = players[i];
+				// idPlayerDied = i;
+				break;
+			}
+		}
+
+		player.mass = data.playerMass;
+		player.radius = data.playerRadius;
+		player.x = data.playerX;
+		player.y = data.playerY;
+		console.log(socket.id);
+		
+		socket.broadcast.emit('playerDied', {
+			idPlayerDied : playerDied.id/* players[indexPlayerDied].id */,
+			idPlayerEating : player.id
 		});
 		
-		foods.splice(indexFood, 1);
+		socket.broadcast.emit('updatePlayers', {
+			player : player
+		});
+		
+		// io.sockets.socket[playerDied.id].emit('gameOver');
+		io.to(playerDied.id).emit('gameOver');
+		
+		
+		players.splice(i, 1);
+		console.log(players.length);
 	});
 	
 	
 	
 	socket.on('disconnect', function(){
-		players.splice(players.indexOf(player), 1);
+		
+		socket.broadcast.emit('playerDisconnect', {
+			player : player.id
+		});
+		
+		for(let i = 0; i < players.length; i++){
+			if(player.id === players[i].id){
+				players.splice(i, 1);
+			}
+		}
 		console.log("Le joueur " + socket.id + " viens de se déconnecté");
 	});
 	
