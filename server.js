@@ -8,16 +8,11 @@ var server = app.listen(3600);
 
 var io = require('socket.io')(server);
 
-var path    = require("path");
+var path = require("path");
 
-var global = require('./js/client/global');
-
-//var Player = require('./js/client/player');
-//var Circle = require('./js/client/circle');
-//var toolBox = require('./js/client/toolBox');
+var toolBox = require('./js/server/toolBox');
 
 
-//app.set('port', 3030);
 app.use(express.static('/'));
 app.use('/js/client', express.static(__dirname + '/js/client'));
 app.use('/css', express.static(__dirname + '/css'));
@@ -26,56 +21,31 @@ app.get('/', function(req, res){
 	res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-var maxFood = 1000;
-var massFood = Math.PI * 100;
+var maxFood = 1000;		// le maximum de cercle food à cree
+var massFood = Math.PI * 100;	// ça masse par defaut
 
-var massNewPlayer = Math.PI * 30 * 30;
+var massNewPlayer = Math.PI * 30 * 30; // la masse par defaut d'un nouveau player
 
-var players = [];
-var x, y;
-var foods = [];
+var players = [];		// la liste de tout les players
+var playerX, playerY;	// les coordonnees x et y d'un nouveau player
 
-var idFood = 0;
+var foods = [];			// la liste des cercle foods
+var idFood = 0;			// pour savoir les id utiliser
 
-var data, dataForAll;
-
-
-function newGame(){
-	for(let i = 0; i < maxFood; i++){
-		foods[i] = new Circle(random(10, 3990), random(10, 3990));
-		//console.log(foods[i].id);
-	}
-}
-
-function collisionPlayers(){
-	var boucle = true;
-	while(boucle){
-		boucle = false;
-		x = random(100, 3950);
-		y = random(100, 3950);
-		for(let i = 0; i < players.length && players.length > 0; i++){
-			if(x >= players[i].x - 100 && x <= players[i].x + 100 && y >= players[i].y - 100 && y <= players[i].y + 100){
-				boucle = true;
-				break;
-			}
-		}
-	}
-}
+var data;				// pour mettre les donner à envoyé au client
 
 
 io.sockets.on('connection', function(socket){
 	console.log("Le joueur " + socket.id + " viens de se connecté");
 	
 	collisionPlayers();
-	var player = new Player(socket.id ,x, y);
+	var player = new Player(socket.id, playerX, playerY);
 	players.push(player);
-	
-	
+		
 	if(players.length === 1){
-		newGame();
+		initFoods();
 		data = new Data(socket.id, foods, players);
 		socket.emit('newGame', data);
-		console.log('newGame');
 	}else{
 		data = new Data(socket.id, foods, players);
 		socket.emit('newGame', data);
@@ -85,18 +55,12 @@ io.sockets.on('connection', function(socket){
 		});
 	}
 
-	
 	socket.on('playerMove', function(data){
-		//console.log(socket.id);
-		// var indexPlayer = players.indexOf(player);
 		for(let i = 0; i < players.length; i++){
 			if(players[i].id === data.id){
 				players[i].x = data.x;
 				players[i].y = data.y;
 				socket.broadcast.emit('updatePlayers', {
-					// id : player.id,
-					// x : data.x,
-					// y : data.y
 					player : player
 				});
 				break;
@@ -130,7 +94,6 @@ io.sockets.on('connection', function(socket){
 		for(i = 0; i < players.length; i++){
 			if(data.playerDied === players[i].id){
 				var playerDied = players[i];
-				// idPlayerDied = i;
 				break;
 			}
 		}
@@ -139,10 +102,9 @@ io.sockets.on('connection', function(socket){
 		player.radius = data.playerRadius;
 		player.x = data.playerX;
 		player.y = data.playerY;
-		console.log(socket.id);
 		
 		socket.broadcast.emit('playerDied', {
-			idPlayerDied : playerDied.id/* players[indexPlayerDied].id */,
+			idPlayerDied : playerDied.id,
 			idPlayerEating : player.id
 		});
 		
@@ -150,18 +112,14 @@ io.sockets.on('connection', function(socket){
 			player : player
 		});
 		
-		// io.sockets.socket[playerDied.id].emit('gameOver');
 		io.to(playerDied.id).emit('gameOver');
 		
-		
 		players.splice(i, 1);
-		console.log(players.length);
 	});
 	
 	
 	
 	socket.on('disconnect', function(){
-		
 		socket.broadcast.emit('playerDisconnect', {
 			player : player.id
 		});
@@ -173,49 +131,84 @@ io.sockets.on('connection', function(socket){
 		}
 		console.log("Le joueur " + socket.id + " viens de se déconnecté");
 	});
-	
-	
 });
 
 
-
-
-function generateIdFood(){
-	return idFood++;
-}
-
+// function generateIdFood(){
+	// return idFood++;
+// }
+/** 
+* Crée une instance de Data
+*
+* @constructor
+* @this {Data}
+* @param {String} id: un identifiant unique pour chaque Player
+* @param {Array} foods: La liste des cercle foods encore sur la map
+* @param {Array} players: La liste de tout les players connecte
+*/
 function Data(id, foods, players){
 	this.id = id;
 	this.foods = foods;
 	this.players = players;
 }
-
-function Circle(x, y){
-	this.id = generateIdFood();
+/** 
+* Crée une instance de Food
+*
+* @constructor
+* @this {Food}
+* @param {number} x: La position x du centre du cercle food
+* @param {number} y: La position y du centre du cercle food
+*/
+function Food(x, y){
+	this.id = idFood++;
 	this.x = x;
 	this.y = y;
 }
-
+/** 
+* Crée une instance de Player
+*
+* @constructor
+* @this {Player}
+* @param {String} id: un identifiant unique pour chaque Player
+* @param {number} x: La position x du centre du cercle Player
+* @param {number} y: La position y du centre du cercle Player
+*/
 function Player(id, x, y){
 	this.id = id;
 	this.radius = 30;
 	this.x = x;
 	this.y = y;
 	this.mass = massNewPlayer;
-	this.vitesse = 50;
-	this.color = randomColorHex();
+	this.speed = 50;
+	this.color = toolBox.randomColorHex();
 }
 
-function random(min, max){
-	return Math.floor((Math.random() * (max - min)) + min);
+/**
+* @method Cette methode initialise la liste foods
+*/
+function initFoods(){
+	for(let i = 0; i < maxFood; i++){
+		foods[i] = new Food(toolBox.random(10, 3990), toolBox.random(10, 3990));
+	}
 }
-
-function randomColorHex(){
-	return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+/**
+* @method Cette methode initialise les variable playerX et playerY avec des valeur 
+*			valide (sans collision avec les autre player)
+*/
+function collisionPlayers(){
+	var boucle = true;
+	while(boucle){
+		boucle = false;
+		playerX = toolBox.random(100, 3950);
+		playerY = toolBox.random(100, 3950);
+		for(let i = 0; i < players.length && players.length > 0; i++){
+			if(playerX >= players[i].playerX - 100 && playerX <= players[i].playerX + 100
+				&& playerY >= players[i].playerY - 100 && playerY <= players[i].playerY + 100){
+				boucle = true;
+				break;
+			}
+		}
+	}
 }
-
-
-//server.listen(3600);
-
 
  

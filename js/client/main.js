@@ -1,23 +1,24 @@
-//var socket = io.connect('http://localhost:3600');
 
 window.onload = main;
 
 var socket;
 
 var map, context;
-var player, players = [];
-var foods = [];
-var mouse, mouseBis, mouseIsMoving = false;
+
+var player;
+
+var foods = [], players = [];
+
+var mouse, mouseBis;
+
 var frameLoop;
 
-//var global = require('./global');
-
-var distMouse;
+var mouseIsMoving = false;
 var gameOver = false;
 
 
-var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-
+var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame 
+							|| window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
 
 
@@ -28,15 +29,11 @@ function main() {
 	map = createMap();
 	context = map.getContext("2d");
 	
-	/* for(let i = 0; i < 100; i++){
-		foods[i] = new Circle();
-	} */
-	
 	socket.on('newGame', function(data){
 		players = data.players;
 		for(let i = 0; i < players.length; i++)
 			if(players[i].id === data.id)
-					player = new Player(players[i].id, players[i].color, players[i].x, players[i].y);
+				player = new Player(players[i].id, players[i].color, players[i].x, players[i].y);
 		for(let i = 0; i < data.foods.length; i++)
 			foods[i] = new Circle(data.foods[i].id, data.foods[i].x, data.foods[i].y);
 	});
@@ -48,8 +45,6 @@ function main() {
 	});
 	
 	socket.on('updatePlayers', function(data){
-				//console.log(data.player.id);
-
 		for(let i = 0; i < players.length; i++){
 			if(players[i].id === data.player.id){
 				players[i].x = data.player.x;
@@ -62,8 +57,7 @@ function main() {
 	});
 	
 	socket.on('updateFoods', function(data){
-		//console.log(data.food);
-		if(data.player.id !== player.name){
+		if(data.player.id !== player.id){
 			for(let i = 0; i < foods.length; i++){
 				if(foods[i].id === data.food){
 					foods.splice(i, 1);
@@ -74,7 +68,7 @@ function main() {
 	});
 	
 	socket.on('playerDied', function(data){
-		if(data.idPlayerEating !== player.name){
+		if(data.idPlayerEating !== player.id){
 			for(let i = 0; i < players.length; i++){
 				if(players[i].id === data.idPlayerDied){
 					players.splice(i, 1);
@@ -85,9 +79,7 @@ function main() {
 	});
 	
 	socket.on('gameOver', function(){
-		//window.alert('Game Over');
 		gameOver = true;
-		//player = undefined;
 		//cancelAnimationFrame(frameLoop);
 	});
 	
@@ -100,40 +92,24 @@ function main() {
 		}
 	});
 
-	//player = new Player("anas");
-	
 	frameLoop = requestAnimationFrame(onFrame);
-	
 }
 
-//var eating;
 
 function onFrame(){
 	frameLoop = requestAnimationFrame(onFrame);
-	//if(player.inMoving)
-	
-	if(player !== undefined){
-		
-		context.clearRect(0, 0, global.mapWidth, global.mapHeight);
-		// clearArc(player.position.x, player.position.y, player.radius+1);
-		// for(let i = 0; i < players.length; i++){
-			// if(players[i].id !== player.name)
-				// clearArc(players[i].x, players[i].y, players[i].radius+1);
-		// }
-		
 
+	if(player !== undefined){
+		context.clearRect(0, 0, global.mapWidth, global.mapHeight);
 		player.inMoving = false;
+		
 		if(!gameOver){
 			player.move();
-		
-			//eating = false;
 			for(let i = 0; i < foods.length; i++){
 				if(player.distanceToCircle(foods[i]) < player.getRadius - 2){
-					player.eatCircle(foods[i]);
-					//clearArc(foods[i].position.x, foods[i].position.y, foods[i].radius+1);
-					
+					player.eatCircle(foods[i]);	
 					socket.emit('eatCircle', {
-						player : player.name,
+						player : player.id,
 						playerMass : player.mass,
 						playerRadius : player.radius,
 						playerX : player.position.x,
@@ -141,14 +117,13 @@ function onFrame(){
 						food : foods[i]
 					});
 					foods.splice(i, 1);
-					//eating = true;
 				}
 			}
 			
 			for(let i = 0; i < players.length; i++){
-				if(players[i].id !== player.name){
+				if(players[i].id !== player.id){
 					if(player.position.distanceToVector(new Vector(players[i].x, players[i].y)) < player.radius - players[i].radius * 0.1 
-						&& player.mass > players[i].mass /* + (players[i].mass * 0.5) */){
+						&& player.mass > players[i].mass){
 						player.eatPlayer(players[i]);
 						
 						socket.emit('eatPlayer', {
@@ -163,11 +138,10 @@ function onFrame(){
 					}
 				}
 			}
-			
-			// context.translate(1, 1);
+
 			if(player.inMoving){
 				socket.emit('playerMove', {
-					id : player.name,
+					id : player.id,
 					x : player.position.x,
 					y : player.position.y
 				});
@@ -181,9 +155,10 @@ function onFrame(){
 		}
 		
 		for(let i = 0; i < players.length; i++){
-			if(players[i].id !== player.name)
+			if(players[i].id !== player.id)
 				drawEnemy(players[i]);
 		}
+		
 		if(!gameOver)
 			drawPlayer(player);
 		else

@@ -1,47 +1,64 @@
-
-// var mapWidth = 8000;
-// var mapHeight = 8000;
-//var global = require('./global');
-
-
-
+/**
+* @method Cette methode permet de dessiner un Player dans un canvas
+*
+* @param {Player} Player: le player à dessiner (le joueur)
+*/
 function drawPlayer(player){
-	//context.translate(player.position.x - w / 2, player.position.y - h / 2);
 	context.save();
-	context.beginPath();
+	
 	context.fillStyle = player.getColor;
-	context.arc(w/2, h/2/* player.position.x, player.position.y */, player.getRadius, 0, 2 * Math.PI);
+	
+	context.beginPath();
+
+	context.arc(w/2, h/2, player.getRadius, 0, 2 * Math.PI);
 	context.fill();
+	
 	context.restore();
 }
-
+/**
+* @method Cette methode permet de dessiner un ennemi (autre player) dans un canvas
+*
+* @param {Object} enemy: le player ennemi à dessiner
+*/
 function drawEnemy(enemy){
 	context.save();
-	context.translate(w/2 - player.position.x, h/2 - player.position.y);
-	context.beginPath();
+	
 	context.fillStyle = enemy.color;
+	context.translate(w/2 - player.position.x, h/2 - player.position.y);
+	
+	context.beginPath();
+
 	context.arc(enemy.x, enemy.y, enemy.radius, 0, 2 * Math.PI);
 	context.fill();
+	
 	context.restore();
 }
-
-function drawCircle(cercle){
+/**
+* @method Cette methode permet de dessiner un cercle dans un canvas
+*
+* @param {Circle} circle: le cercle à dessiner
+*/
+function drawCircle(circle){
 	context.save();
+	
 	context.translate(w/2 - player.position.x, h/2 - player.position.y);
+	context.fillStyle = circle.getColor;
+	
 	context.beginPath();
-	context.fillStyle = cercle.getColor;
-	context.arc(cercle.position.x, cercle.position.y, cercle.getRadius, 0, 2 * Math.PI);
+
+	context.arc(circle.position.x, circle.position.y, circle.getRadius, 0, 2 * Math.PI);
 	context.fill();
+	
 	context.restore();
 }
-
+/**
+* @method Cette methode permet de dessiner un grille dans un canvas
+*/
 function drawGrid(){
-	// let nombreGridWidth = w / 10;
-	// let nombreGridHeight = h / 10;
 	context.save();
+	
 	context.lineWidth = 1;
 	context.strokeStyle = "#dddddd";
-	//context.globalAlpha = 1;
 	context.translate(w/2 - player.position.x, h/2 - player.position.y);
 
 	context.beginPath();
@@ -55,23 +72,19 @@ function drawGrid(){
 		context.moveTo(0, i);
 		context.lineTo(global.mapWidth, i);
 	}
+	
 	context.stroke();
+	
 	context.restore();
-	//context.globalAlpha = 1;
 }
-
-function createMap(){
-	let map = document.createElement("canvas");
-	map.width = w;
-	map.height = h;
-	document.body.appendChild(map);
-	return map;
-}
-
+/**
+* @method Cette methode permet de dessiner un text "GAME OVER" dans un canvas
+*/
 function drawGameOver(){
 	context.save();
-	//context.translate(mapWidth / 4, 50);
+
 	context.font = "bold 60px arial";
+	
 	context.beginPath();
 	
 	context.fillText('GAME OVER', w / 4, 100);
@@ -79,12 +92,3 @@ function drawGameOver(){
 	context.restore();
 }
 
-function clearArc(x, y, radius) {
-	context.save();
-	// context.globalCompositeOperation = 'destination-out';
-	context.beginPath();
-	context.fillStyle = 'white';
-	context.arc(x, y, radius, 0, 2 * Math.PI);
-	context.fill();
-	context.restore();
-}

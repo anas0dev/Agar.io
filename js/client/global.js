@@ -4,4 +4,4 @@ var global = {
 	mapHeight : 4000
 };
 
-module.exports = global;
+//module.exports = global;
