@@ -18,7 +18,7 @@ class Player extends Circle {
 		this.id = id;		// {String} id: l'identifiant du cercle player
 		this.color = color;	// {String} color: la couleur du cercle player
 		this.radius = 30;	// {number} radius: le diamètre du cercle player
-		this.speed = 70;	// {number} speed: 	la vitesse du cercle player
+		this.speed = 100;	// {number} speed: 	la vitesse du cercle player
 		this.position = new Vector(x, y); 	// {Vector} position: la position du cercle player
 		this.inMoving = false;		// {boolean} inMoving: indique si le cercle player à bouger
 	}

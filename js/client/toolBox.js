@@ -35,31 +35,31 @@ document.addEventListener("mousemove", function(e){
 * ecoute l'evenement resize et enregistre les dimension de la de la fenetre dans 
 * les variable globale w et h puis supprime l'ancien canvas et cree un nouveau
 */
-window.addEventListener('resize', function(e){
+window.addEventListener("resize", function(e){
 	w = window.innerWidth;
 	h = window.innerHeight;
-	deleteMap(map);
-	map = createMap();
-	context = map.getContext("2d");
+	deleteCanvas(canvas);
+	canvas = createCanvas();
+	context = canvas.getContext("2d");
 });
 
 /**
 * @method Cette methode permet de crée et retourner un canvas
 */
-function createMap(){
-	let map = document.createElement("canvas");
-	map.width = w;
-	map.height = h;
-	document.body.appendChild(map);
-	return map;
+function createCanvas(){
+	let canvas = document.createElement("canvas");
+	canvas.width = w;
+	canvas.height = h;
+	document.body.appendChild(canvas);
+	return canvas;
 }
 /**
 * @method Cette methode permet de supprimer un canvas
 *
-* @param {Object} map: le canvas à supprimer
+* @param {Object} canvas: le canvas à supprimer
 */
-function deleteMap(map){
-	document.body.removeChild(map);
+function deleteCanvas(canvas){
+	document.body.removeChild(canvas);
 }
 
 

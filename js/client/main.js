@@ -3,7 +3,7 @@ window.onload = main;
 
 var socket;
 
-var map, context;
+var canvas, context;
 
 var player;
 
@@ -21,13 +21,15 @@ var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAni
 							|| window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
 
-
+/**
+* @method Cette methode est la methode principale
+*/
 function main() {
 	
 	socket = io.connect('http://localhost:3600');
 	
-	map = createMap();
-	context = map.getContext("2d");
+	canvas = createCanvas();
+	context = canvas.getContext("2d");
 	
 	socket.on('newGame', function(data){
 		players = data.players;
@@ -95,7 +97,9 @@ function main() {
 	frameLoop = requestAnimationFrame(onFrame);
 }
 
-
+/**
+* @method Cette methode est la methode boucle qui va tourner dans l'animation frame
+*/
 function onFrame(){
 	frameLoop = requestAnimationFrame(onFrame);
 
