@@ -1,7 +1,7 @@
 
-// var w = window.innerWidth;
-// var h = window.innerHeight;
-var w = h = 600; // 	w c'est le width du canvas et le h c'est son height
+var w = window.innerWidth; 	// la largeur de la fenetre
+var h = window.innerHeight;	// la longeur de la fenetre
+
 /**
 * @method Cette methode retourne une couleur hexadicimale aleatoire
 */
@@ -31,6 +31,17 @@ document.addEventListener("mousemove", function(e){
 		mouseBis = mouse.copy();
 	}
 });
+/**
+* ecoute l'evenement resize et enregistre les dimension de la de la fenetre dans 
+* les variable globale w et h puis supprime l'ancien canvas et cree un nouveau
+*/
+window.addEventListener('resize', function(e){
+	w = window.innerWidth;
+	h = window.innerHeight;
+	deleteMap(map);
+	map = createMap();
+	context = map.getContext("2d");
+});
 
 /**
 * @method Cette methode permet de crée et retourner un canvas
@@ -41,6 +52,14 @@ function createMap(){
 	map.height = h;
 	document.body.appendChild(map);
 	return map;
+}
+/**
+* @method Cette methode permet de supprimer un canvas
+*
+* @param {Object} map: le canvas à supprimer
+*/
+function deleteMap(map){
+	document.body.removeChild(map);
 }
 
 
